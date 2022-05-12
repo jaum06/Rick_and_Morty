@@ -1,23 +1,25 @@
 package com.zlasher.rick_and_morty.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zlasher.rick_and_morty.adapter.CharacterAdapter
 import com.zlasher.rick_and_morty.databinding.FragmentCharactersBinding
 import com.zlasher.rick_and_morty.detail.CharacterDetail
 import com.zlasher.rick_and_morty.model.APIService
+import com.zlasher.rick_and_morty.model.Retrofit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class CharactersFragment : Fragment() {
+class CharactersFragment : Fragment(), Retrofit {
 
     private lateinit var binding: FragmentCharactersBinding
     private lateinit var adapter: CharacterAdapter
@@ -39,24 +41,19 @@ class CharactersFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        adapter = CharacterAdapter(charactersList)
+        adapter = CharacterAdapter(charactersList, onItemClicked = { onCharacterClicked(it) })
         binding.characterRecycler.layoutManager = LinearLayoutManager(context)
         binding.characterRecycler.adapter = adapter
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://rickandmortyapi.com/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
+    private fun onCharacterClicked(character: CharacterDetail) {
+        findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToCharacterDetailFragment(character))
     }
 
     private fun searchCharacters() {
         CoroutineScope(Dispatchers.IO).launch {
             val call = getRetrofit().create(APIService::class.java).getCharacters()
             val character = call.body()
-
 
             activity?.runOnUiThread {
                 if (call.isSuccessful) {
