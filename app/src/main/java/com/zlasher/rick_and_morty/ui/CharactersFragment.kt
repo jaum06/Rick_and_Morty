@@ -1,8 +1,6 @@
 package com.zlasher.rick_and_morty.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +45,11 @@ class CharactersFragment : Fragment(), Retrofit {
     }
 
     private fun onCharacterClicked(character: CharacterDetail) {
-        findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToCharacterDetailFragment(character))
+        findNavController().navigate(
+            CharactersFragmentDirections.actionCharactersFragmentToCharacterDetailFragment(
+                character
+            )
+        )
     }
 
     private fun searchCharacters() {
